@@ -5,6 +5,8 @@ import com.udacity.jdnd.course3.critter.pet.Pet;
 import javax.persistence.*;
 import java.util.List;
 
+@NamedQuery(name = "Customer.findAll",
+        query = "select c from Customer c")
 @Entity
 public class Customer extends Person {
     private String phoneNumber;
@@ -15,6 +17,15 @@ public class Customer extends Person {
     // changed CascadeType to ALL
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Pet> pets;
+
+    public Customer() {}
+
+    public Customer(String name, String phoneNumber, String notes) {
+        super(name);
+
+        this.phoneNumber = phoneNumber;
+        this.notes = notes;
+    }
 
     public String getPhoneNumber() {
         return phoneNumber;
