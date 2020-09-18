@@ -26,4 +26,11 @@ public class CustomerRepository {
 
         return query.getResultList();
     }
+
+    public Customer getCustomer(long customerId) {
+        TypedQuery<Customer> query = entityManager.createNamedQuery("Customer.find", Customer.class);
+        query.setParameter("customerId", customerId);
+
+        return query.getSingleResult();
+    }
 }

@@ -3,10 +3,13 @@ package com.udacity.jdnd.course3.critter.user;
 import com.udacity.jdnd.course3.critter.pet.Pet;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @NamedQuery(name = "Customer.findAll",
         query = "select c from Customer c")
+@NamedQuery(name = "Customer.find",
+        query = "select c from Customer c where c.id = :customerId")
 @Entity
 public class Customer extends Person {
     private String phoneNumber;
@@ -25,6 +28,7 @@ public class Customer extends Person {
 
         this.phoneNumber = phoneNumber;
         this.notes = notes;
+        this.pets = new ArrayList<>();
     }
 
     public String getPhoneNumber() {
@@ -49,5 +53,9 @@ public class Customer extends Person {
 
     public void setPets(List<Pet> pets) {
         this.pets = pets;
+    }
+
+    public void addPet(Pet pet) {
+        this.pets.add(pet);
     }
 }
