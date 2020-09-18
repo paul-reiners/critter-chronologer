@@ -37,26 +37,31 @@ public class UserController {
 
         List<CustomerDTO> customerDTOS = new ArrayList<>(customers.size());
         for (Customer customer: customers) {
-            CustomerDTO customerDTO = new CustomerDTO();
-            customerDTO.setId(customer.getId());
-            customerDTO.setName(customer.getName());
-            customerDTO.setNotes(customer.getNotes());
-            List<Pet> pets = customer.getPets();
-            if (pets != null) {
-                List<Long> petIds = new ArrayList<>(pets.size());
-                for (Pet pet : pets) {
-                    petIds.add(pet.getId());
-                }
-                customerDTO.setPetIds(petIds);
-            } else {
-                customerDTO.setPetIds(new ArrayList<>());
-            }
-            customerDTO.setPhoneNumber(customer.getPhoneNumber());
+            CustomerDTO customerDTO = getCustomerDTO(customer);
 
             customerDTOS.add(customerDTO);
         }
 
         return customerDTOS;
+    }
+
+    private CustomerDTO getCustomerDTO(Customer customer) {
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setId(customer.getId());
+        customerDTO.setName(customer.getName());
+        customerDTO.setNotes(customer.getNotes());
+        List<Pet> pets = customer.getPets();
+        if (pets != null) {
+            List<Long> petIds = new ArrayList<>(pets.size());
+            for (Pet pet : pets) {
+                petIds.add(pet.getId());
+            }
+            customerDTO.setPetIds(petIds);
+        } else {
+            customerDTO.setPetIds(new ArrayList<>());
+        }
+        customerDTO.setPhoneNumber(customer.getPhoneNumber());
+        return customerDTO;
     }
 
     @GetMapping("/customer/pet/{petId}")
@@ -83,5 +88,4 @@ public class UserController {
     public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeDTO) {
         throw new UnsupportedOperationException();
     }
-
 }
