@@ -13,12 +13,12 @@ public class UserService {
     private CustomerRepository customerRepository;
 
     public Long save(Customer customer) {
-        customerRepository.persist(customer);
+        customerRepository.save(customer);
 
         return customer.getId();
     }
 
-    public List<Customer> getAllCustomers() {
-        return customerRepository.getAllCustomers();
+    public Iterable<Customer> getAllCustomers() {
+        return customerRepository.findAll();
     }
 }

@@ -33,9 +33,9 @@ public class UserController {
 
     @GetMapping("/customer")
     public List<CustomerDTO> getAllCustomers(){
-        List<Customer> customers = userService.getAllCustomers();
+        Iterable<Customer> customers = userService.getAllCustomers();
 
-        List<CustomerDTO> customerDTOS = new ArrayList<>(customers.size());
+        List<CustomerDTO> customerDTOS = new ArrayList<>();
         for (Customer customer: customers) {
             CustomerDTO customerDTO = getCustomerDTO(customer);
 

@@ -25,6 +25,11 @@ public class PetController {
         LocalDate birthDate = petDTO.getBirthDate();
         String notes = petDTO.getNotes();
         Pet pet = new Pet(name, type, ownerId, birthDate, notes);
+        long petDTOId = petDTO.getId();
+        if (petDTOId != 0) {
+            pet = petService.getPet(petDTOId);
+        }
+
         Long id = petService.save(pet);
         petDTO.setId(id);
 
@@ -33,7 +38,16 @@ public class PetController {
 
     @GetMapping("/{petId}")
     public PetDTO getPet(@PathVariable long petId) {
-        return petService.getPet(petId);
+        Pet pet = petService.getPet(petId);
+        PetDTO petDTO = new PetDTO();
+        petDTO.setId(pet.getId());
+        petDTO.setBirthDate(pet.getBirthDate());
+        petDTO.setName(pet.getName());
+        petDTO.setNotes(pet.getNotes());
+        petDTO.setOwnerId(pet.getOwnerId());
+        petDTO.setType(pet.getType());
+
+        return petDTO;
     }
 
     @GetMapping

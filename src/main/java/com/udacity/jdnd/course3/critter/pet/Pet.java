@@ -7,10 +7,6 @@ import org.hibernate.annotations.Nationalized;
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@NamedQuery(name = "Pet.findByOwner",
-        query = "select p from Pet p where p.ownerId = :ownerId")
-@NamedQuery(name = "Pet.find",
-        query = "select p from Pet p where p.id = :petId")
 @Entity
 public class Pet {
     @Id
@@ -22,7 +18,11 @@ public class Pet {
     private String name;
 
     private PetType type;
+
+    @OneToOne
+    @JoinColumn(name = "owner_id")
     private Long ownerId;
+
     private LocalDate birthDate;
 
     @Column(name = "notes", length = 500)

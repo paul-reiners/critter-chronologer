@@ -12,27 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional
-public class PetRepository {
-    @PersistenceContext
-    EntityManager entityManager;
-
-
-    public List<Pet> getPetsByOwner(long ownerId) {
-        TypedQuery<Pet> query = entityManager.createNamedQuery("Pet.findByOwner", Pet.class);
-        query.setParameter("ownerId", ownerId);
-
-        return query.getResultList();
-    }
-
-    public void save(Pet pet) {
-        entityManager.persist(pet);
-    }
-
-    public Optional<Pet> findById(long petId) {
-        TypedQuery<Pet> query = entityManager.createNamedQuery("Pet.find", Pet.class);
-        query.setParameter("petId", petId);
-
-        return Optional.of(query.getSingleResult());
-    }
+public interface PetRepository
+        extends CrudRepository<Pet, Long> {
+    public List<Pet> getPetsByOwnerId(long ownerId);
 }
