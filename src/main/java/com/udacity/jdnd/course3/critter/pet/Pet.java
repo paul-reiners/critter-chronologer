@@ -1,6 +1,7 @@
 package com.udacity.jdnd.course3.critter.pet;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.udacity.jdnd.course3.critter.user.Customer;
 import com.udacity.jdnd.course3.critter.views.Views;
 import org.hibernate.annotations.Nationalized;
 
@@ -19,9 +20,8 @@ public class Pet {
 
     private PetType type;
 
-    @OneToOne
-    @JoinColumn(name = "owner_id")
-    private Long ownerId;
+    @ManyToOne
+    private Customer owner;
 
     private LocalDate birthDate;
 
@@ -30,10 +30,10 @@ public class Pet {
 
     public Pet() {}
 
-    public Pet(String name, PetType type, Long ownerId, LocalDate birthDate, String notes) {
+    public Pet(String name, PetType type, Customer owner, LocalDate birthDate, String notes) {
         this.name = name;
         this.type = type;
-        this.ownerId = ownerId;
+        this.owner = owner;
         this.birthDate = birthDate;
         this.notes = notes;
     }
@@ -62,12 +62,12 @@ public class Pet {
         this.type = type;
     }
 
-    public Long getOwnerId() {
-        return ownerId;
+    public Customer getOwner() {
+        return owner;
     }
 
-    public void setOwnerId(Long ownerId) {
-        this.ownerId = ownerId;
+    public void setOwnerId(Customer owner) {
+        this.owner = owner;
     }
 
     public LocalDate getBirthDate() {

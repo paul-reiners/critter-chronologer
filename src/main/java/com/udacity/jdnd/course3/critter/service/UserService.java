@@ -5,7 +5,7 @@ import com.udacity.jdnd.course3.critter.user.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -20,5 +20,9 @@ public class UserService {
 
     public Iterable<Customer> getAllCustomers() {
         return customerRepository.findAll();
+    }
+
+    public Optional<Customer> getUser(Long ownerId) {
+        return customerRepository.findById(ownerId);
     }
 }

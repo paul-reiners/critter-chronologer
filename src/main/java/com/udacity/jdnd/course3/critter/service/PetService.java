@@ -21,7 +21,7 @@ public class PetService {
 
     public Long save(Pet pet) {
         petRepository.save(pet);
-        long customerId = pet.getOwnerId();
+        long customerId = pet.getOwner().getId();
         Optional<Customer> customerOptional = customerRepository.findById(customerId);
         if (customerOptional.isPresent()) {
             Customer customer = customerOptional.get();
@@ -44,14 +44,21 @@ public class PetService {
         petDTO.setBirthDate(pet.getBirthDate());
         petDTO.setName(pet.getName());
         petDTO.setNotes(pet.getNotes());
-        petDTO.setOwnerId(pet.getOwnerId());
+        petDTO.setOwnerId(pet.getOwner().getId());
         petDTO.setType(pet.getType());
 
         return petDTO;
     }
 
     public List<PetDTO> getPetsByOwner(long ownerId) {
-        List<Pet> pets = petRepository.getPetsByOwnerId(ownerId);
+        Optional<Customer> customerOptional = customerRepository.findById(ownerId);
+        List<Pet> pets;
+        if (customerOptional.isPresent()) {
+            Customer customer = customerOptional.get();
+            pets = customer.getPets();
+        } else {
+            pets = new ArrayList<>();
+        }
 
         List<PetDTO> petDTOS = new ArrayList<>(pets.size());
         for (Pet pet: pets) {

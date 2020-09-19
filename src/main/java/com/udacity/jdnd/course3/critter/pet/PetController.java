@@ -2,11 +2,13 @@ package com.udacity.jdnd.course3.critter.pet;
 
 import com.udacity.jdnd.course3.critter.service.PetService;
 import com.udacity.jdnd.course3.critter.service.UserService;
+import com.udacity.jdnd.course3.critter.user.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Handles web requests related to Pets.
@@ -16,6 +18,8 @@ import java.util.List;
 public class PetController {
     @Autowired
     private PetService petService;
+    @Autowired
+    private UserService userService;
 
     @PostMapping
     public PetDTO savePet(@RequestBody PetDTO petDTO) {
@@ -24,7 +28,8 @@ public class PetController {
         Long ownerId = petDTO.getOwnerId();
         LocalDate birthDate = petDTO.getBirthDate();
         String notes = petDTO.getNotes();
-        Pet pet = new Pet(name, type, ownerId, birthDate, notes);
+        Optional<Customer> customerOptional = userService.getUser(ownerId);
+        Pet pet = new Pet(name, type, customerOptional.orElse(new Customer()), birthDate, notes);
         long petDTOId = petDTO.getId();
         if (petDTOId != 0) {
             pet = petService.getPet(petDTOId);
@@ -44,7 +49,7 @@ public class PetController {
         petDTO.setBirthDate(pet.getBirthDate());
         petDTO.setName(pet.getName());
         petDTO.setNotes(pet.getNotes());
-        petDTO.setOwnerId(pet.getOwnerId());
+        petDTO.setOwnerId(pet.getOwner().getId());
         petDTO.setType(pet.getType());
 
         return petDTO;
