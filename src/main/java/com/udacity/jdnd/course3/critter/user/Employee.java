@@ -22,6 +22,10 @@ public class Employee extends Person {
         this.daysAvailable = daysAvailable;
     }
 
+    public Employee() {
+
+    }
+
     public List<EmployeeSkill> getSkills() {
         return skills;
     }
