@@ -5,7 +5,6 @@ import com.udacity.jdnd.course3.critter.pet.PetDTO;
 import com.udacity.jdnd.course3.critter.repository.CustomerRepository;
 import com.udacity.jdnd.course3.critter.repository.PetRepository;
 import com.udacity.jdnd.course3.critter.user.Customer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,10 +13,13 @@ import java.util.Optional;
 
 @Service
 public class PetService {
-    @Autowired
-    PetRepository petRepository;
-    @Autowired
-    CustomerRepository customerRepository;
+    private final PetRepository petRepository;
+    private final CustomerRepository customerRepository;
+
+    public PetService(PetRepository petRepository, CustomerRepository customerRepository) {
+        this.petRepository = petRepository;
+        this.customerRepository = customerRepository;
+    }
 
     public Long save(Pet pet) {
         petRepository.save(pet);
@@ -60,11 +62,15 @@ public class PetService {
             pets = new ArrayList<>();
         }
 
-        List<PetDTO> petDTOS = new ArrayList<>(pets.size());
+        List<PetDTO> petDTOs = new ArrayList<>(pets.size());
         for (Pet pet: pets) {
-            petDTOS.add(getPetDTO(pet));
+            petDTOs.add(getPetDTO(pet));
         }
 
-        return petDTOS;
+        return petDTOs;
+    }
+
+    public Optional<Pet> findById(Long petId) {
+        return petRepository.findById(petId);
     }
 }
