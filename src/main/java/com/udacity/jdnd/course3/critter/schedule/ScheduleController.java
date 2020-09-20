@@ -4,13 +4,13 @@ import com.udacity.jdnd.course3.critter.pet.Pet;
 import com.udacity.jdnd.course3.critter.service.EmployeeService;
 import com.udacity.jdnd.course3.critter.service.PetService;
 import com.udacity.jdnd.course3.critter.service.ScheduleService;
+import com.udacity.jdnd.course3.critter.service.UserService;
+import com.udacity.jdnd.course3.critter.user.Customer;
 import com.udacity.jdnd.course3.critter.user.Employee;
 import com.udacity.jdnd.course3.critter.user.Person;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -22,11 +22,13 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
     private final EmployeeService employeeService;
     private final PetService petService;
+    private final UserService userService;
 
-    public ScheduleController(ScheduleService scheduleService, EmployeeService employeeService, PetService petService) {
+    public ScheduleController(ScheduleService scheduleService, EmployeeService employeeService, PetService petService, UserService userService) {
         this.scheduleService = scheduleService;
         this.employeeService = employeeService;
         this.petService = petService;
+        this.userService = userService;
     }
 
     @PostMapping
@@ -64,14 +66,7 @@ public class ScheduleController {
         Iterable<Schedule> scheduleIterable = scheduleService.getAllSchedules();
         List<ScheduleDTO> scheduleDTOS = new ArrayList<>();
         for (Schedule schedule: scheduleIterable) {
-            ScheduleDTO scheduleDTO = new ScheduleDTO();
-            scheduleDTO.setActivities(schedule.getActivities());
-            scheduleDTO.setDate(schedule.getDate());
-            List<Long> employeeIds = schedule.getEmployees().stream().map(Person::getId).collect(Collectors.toList());
-            scheduleDTO.setEmployeeIds(employeeIds);
-            List<Long> petIds = schedule.getPets().stream().map(Pet::getId).collect(Collectors.toList());
-            scheduleDTO.setPetIds(petIds);
-            scheduleDTO.setId(schedule.getId());
+            ScheduleDTO scheduleDTO = getScheduleDTO(schedule);
 
             scheduleDTOS.add(scheduleDTO);
         }
@@ -79,18 +74,45 @@ public class ScheduleController {
         return scheduleDTOS;
     }
 
+    private ScheduleDTO getScheduleDTO(Schedule schedule) {
+        ScheduleDTO scheduleDTO = new ScheduleDTO();
+        scheduleDTO.setActivities(schedule.getActivities());
+        scheduleDTO.setDate(schedule.getDate());
+        List<Long> employeeIds = schedule.getEmployees().stream().map(Person::getId).collect(Collectors.toList());
+        scheduleDTO.setEmployeeIds(employeeIds);
+        List<Long> petIds = schedule.getPets().stream().map(Pet::getId).collect(Collectors.toList());
+        scheduleDTO.setPetIds(petIds);
+        scheduleDTO.setId(schedule.getId());
+
+        return scheduleDTO;
+    }
+
     @GetMapping("/pet/{petId}")
     public List<ScheduleDTO> getScheduleForPet(@PathVariable long petId) {
-        throw new UnsupportedOperationException();
+        List<Schedule> schedules = scheduleService.getScheduleForPet(petId);
+
+        return schedules.stream().map(this::getScheduleDTO).collect(Collectors.toList());
     }
 
     @GetMapping("/employee/{employeeId}")
     public List<ScheduleDTO> getScheduleForEmployee(@PathVariable long employeeId) {
-        throw new UnsupportedOperationException();
+        List<Schedule> schedules = scheduleService.getScheduleForEmployee(employeeId);
+
+        return schedules.stream().map(this::getScheduleDTO).collect(Collectors.toList());
     }
 
     @GetMapping("/customer/{customerId}")
     public List<ScheduleDTO> getScheduleForCustomer(@PathVariable long customerId) {
-        throw new UnsupportedOperationException();
+        Optional<Customer> customerOptional = userService.getUser(customerId);
+        Set<ScheduleDTO> scheduleDTOSet = new HashSet<>();
+        if (customerOptional.isPresent()) {
+            Customer customer = customerOptional.get();
+            for (Pet pet: customer.getPets()) {
+                List<ScheduleDTO> scheduleDTOList = getScheduleForPet(pet.getId());
+                scheduleDTOSet.addAll(scheduleDTOList);
+            }
+        }
+
+        return new ArrayList<>(scheduleDTOSet);
     }
 }

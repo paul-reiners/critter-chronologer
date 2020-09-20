@@ -1,9 +1,13 @@
 package com.udacity.jdnd.course3.critter.service;
 
+import com.udacity.jdnd.course3.critter.pet.Pet;
 import com.udacity.jdnd.course3.critter.repository.ScheduleRepository;
 import com.udacity.jdnd.course3.critter.schedule.Schedule;
+import com.udacity.jdnd.course3.critter.user.Employee;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,5 +28,39 @@ public class ScheduleService {
 
     public Iterable<Schedule> getAllSchedules() {
         return scheduleRepository.findAll();
+    }
+
+    public List<Schedule> getScheduleForEmployee(long employeeId) {
+        Iterable<Schedule> scheduleIterable = scheduleRepository.findAll();
+        List<Schedule> schedules = new ArrayList<>();
+        for (Schedule schedule: scheduleIterable) {
+            List<Employee> employees = schedule.getEmployees();
+            for (Employee employee: employees) {
+                if (employee.getId() == employeeId) {
+                    schedules.add(schedule);
+
+                    break;
+                }
+            }
+        }
+
+        return schedules;
+    }
+
+    public List<Schedule> getScheduleForPet(long petId) {
+        Iterable<Schedule> scheduleIterable = scheduleRepository.findAll();
+        List<Schedule> schedules = new ArrayList<>();
+        for (Schedule schedule: scheduleIterable) {
+            List<Pet> pets = schedule.getPets();
+            for (Pet pet: pets) {
+                if (pet.getId() == petId) {
+                    schedules.add(schedule);
+
+                    break;
+                }
+            }
+        }
+
+        return schedules;
     }
 }
