@@ -71,7 +71,16 @@ public class UserController {
 
     @GetMapping("/customer/pet/{petId}")
     public CustomerDTO getOwnerByPet(@PathVariable long petId){
-        throw new UnsupportedOperationException();
+        Iterable<Customer> customers = userService.getAllCustomers();
+        for (Customer customer: customers) {
+            for (Pet pet: customer.getPets()) {
+                if (pet.getId() == petId) {
+                    return getCustomerDTO(customer);
+                }
+            }
+        }
+
+        return new CustomerDTO();
     }
 
     @PostMapping("/employee")
