@@ -1,8 +1,9 @@
 package com.udacity.jdnd.course3.critter.user;
 
-import org.hibernate.annotations.CollectionType;
-
-import javax.persistence.*;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.time.DayOfWeek;
 import java.util.List;
 
@@ -14,6 +15,12 @@ public class Employee extends Person {
 
     @ElementCollection @Enumerated(EnumType.STRING)
     private List<DayOfWeek> daysAvailable;
+
+    public Employee(String name, List<EmployeeSkill> skills, List<DayOfWeek> daysAvailable) {
+        super(name);
+        this.skills = skills;
+        this.daysAvailable = daysAvailable;
+    }
 
     public List<EmployeeSkill> getSkills() {
         return skills;
