@@ -6,7 +6,9 @@ import com.udacity.jdnd.course3.critter.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Handles web requests related to Users.
@@ -125,7 +127,20 @@ public class UserController {
     }
 
     @GetMapping("/employee/availability")
-    public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeDTO) {
-        throw new UnsupportedOperationException();
+    public List<EmployeeDTO> findEmployeesForService(@RequestBody EmployeeRequestDTO employeeRequestDTO) {
+        LocalDate desiredDate = employeeRequestDTO.getDate();
+        DayOfWeek desiredDay = desiredDate.getDayOfWeek();
+        Set<EmployeeSkill> desiredSkills = employeeRequestDTO.getSkills();
+        List<Employee> employees = userService.findEmployeesForService(desiredDay, desiredSkills);
+
+        return employees.stream().map(employee -> {
+            EmployeeDTO employeeDTO = new EmployeeDTO();
+            employeeDTO.setDaysAvailable(new HashSet<>(employee.getDaysAvailable()));
+            employeeDTO.setName(employee.getName());
+            employeeDTO.setSkills(new HashSet<>(employee.getSkills()));
+            employeeDTO.setId(employee.getId());
+
+            return employeeDTO;
+        }).collect(Collectors.toList());
     }
 }

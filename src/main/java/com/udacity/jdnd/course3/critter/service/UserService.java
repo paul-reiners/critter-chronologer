@@ -4,17 +4,24 @@ import com.udacity.jdnd.course3.critter.repository.CustomerRepository;
 import com.udacity.jdnd.course3.critter.repository.EmployeeRepository;
 import com.udacity.jdnd.course3.critter.user.Customer;
 import com.udacity.jdnd.course3.critter.user.Employee;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.udacity.jdnd.course3.critter.user.EmployeeSkill;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserService {
-    @Autowired
-    private CustomerRepository customerRepository;
-    @Autowired
-    private EmployeeRepository employeeRepository;
+    private final CustomerRepository customerRepository;
+    private final EmployeeRepository employeeRepository;
+
+    public UserService(CustomerRepository customerRepository, EmployeeRepository employeeRepository) {
+        this.customerRepository = customerRepository;
+        this.employeeRepository = employeeRepository;
+    }
 
     public Long save(Customer customer) {
         customerRepository.save(customer);
@@ -32,5 +39,17 @@ public class UserService {
 
     public Optional<Employee> getEmployee(long id) {
         return employeeRepository.findById(id);
+    }
+
+    public List<Employee> findEmployeesForService(DayOfWeek desiredDate, Set<EmployeeSkill> desiredSkills) {
+        Iterable<Employee> employeeIt = employeeRepository.findAll();
+        List<Employee> employeesForService = new ArrayList<>();
+        for (Employee employee: employeeIt) {
+            if (employee.getDaysAvailable().contains(desiredDate) && employee.getSkills().containsAll(desiredSkills)) {
+                employeesForService.add(employee);
+            }
+        }
+
+        return employeesForService;
     }
 }
