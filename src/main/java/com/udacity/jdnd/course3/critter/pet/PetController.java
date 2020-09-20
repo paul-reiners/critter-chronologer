@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Handles web requests related to Pets.
@@ -17,9 +18,14 @@ import java.util.Optional;
 @RequestMapping("/pet")
 public class PetController {
     @Autowired
-    private PetService petService;
+    private final PetService petService;
     @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public PetController(PetService petService, UserService userService) {
+        this.petService = petService;
+        this.userService = userService;
+    }
 
     @PostMapping
     public PetDTO savePet(@RequestBody PetDTO petDTO) {
@@ -44,6 +50,11 @@ public class PetController {
     @GetMapping("/{petId}")
     public PetDTO getPet(@PathVariable long petId) {
         Pet pet = petService.getPet(petId);
+
+        return getPetDTO(pet);
+    }
+
+    private PetDTO getPetDTO(Pet pet) {
         PetDTO petDTO = new PetDTO();
         petDTO.setId(pet.getId());
         petDTO.setBirthDate(pet.getBirthDate());
@@ -51,17 +62,35 @@ public class PetController {
         petDTO.setNotes(pet.getNotes());
         petDTO.setOwnerId(pet.getOwner().getId());
         petDTO.setType(pet.getType());
-
         return petDTO;
     }
 
     @GetMapping
     public List<PetDTO> getPets(){
-        throw new UnsupportedOperationException();
+        List<Pet> pets = petService.getPets();
+
+        return pets.stream().map(this::getPetDTO).collect(Collectors.toList());
     }
 
     @GetMapping("/owner/{ownerId}")
     public List<PetDTO> getPetsByOwner(@PathVariable long ownerId) {
         return petService.getPetsByOwner(ownerId);
+    }
+
+    @PostMapping("/{petId}")
+    public PetDTO getPet(@PathVariable long petId, @RequestBody PetDTO petDTO) {
+        Pet pet = petService.getPet(petId);
+        pet.setNotes(petDTO.getNotes());
+        pet.setBirthDate(petDTO.getBirthDate());
+        pet.setType(petDTO.getType());
+        Optional<Customer> customerOptional = userService.getUser(petDTO.getOwnerId());
+        if (customerOptional.isPresent()) {
+            Customer customer = customerOptional.get();
+            petDTO.setOwnerId(customer.getId());
+        }
+        petService.save(pet);
+        petDTO.setId(petId);
+
+        return petDTO;
     }
 }

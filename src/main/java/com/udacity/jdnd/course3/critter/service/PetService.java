@@ -23,12 +23,15 @@ public class PetService {
 
     public Long save(Pet pet) {
         petRepository.save(pet);
-        long customerId = pet.getOwner().getId();
-        Optional<Customer> customerOptional = customerRepository.findById(customerId);
-        if (customerOptional.isPresent()) {
-            Customer customer = customerOptional.get();
-            customer.addPet(pet);
-            customerRepository.save(customer);
+        Customer owner = pet.getOwner();
+        if (owner != null) {
+            long customerId = owner.getId();
+            Optional<Customer> customerOptional = customerRepository.findById(customerId);
+            if (customerOptional.isPresent()) {
+                Customer customer = customerOptional.get();
+                customer.addPet(pet);
+                customerRepository.save(customer);
+            }
         }
 
         return pet.getId();
@@ -72,5 +75,15 @@ public class PetService {
 
     public Optional<Pet> findById(Long petId) {
         return petRepository.findById(petId);
+    }
+
+    public List<Pet> getPets() {
+        Iterable<Pet> petIterable = petRepository.findAll();
+        List<Pet> pets = new ArrayList<>();
+        for (Pet pet: petIterable) {
+            pets.add(pet);
+        }
+
+        return pets;
     }
 }
