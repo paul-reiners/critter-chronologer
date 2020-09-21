@@ -1,7 +1,6 @@
 package com.udacity.jdnd.course3.critter.service;
 
 import com.udacity.jdnd.course3.critter.pet.Pet;
-import com.udacity.jdnd.course3.critter.pet.PetDTO;
 import com.udacity.jdnd.course3.critter.repository.CustomerRepository;
 import com.udacity.jdnd.course3.critter.repository.PetRepository;
 import com.udacity.jdnd.course3.critter.user.Customer;
@@ -45,19 +44,7 @@ public class PetService {
         return petOptional.orElseGet(Pet::new);
     }
 
-    private PetDTO getPetDTO(Pet pet) {
-        PetDTO petDTO = new PetDTO();
-        petDTO.setId(pet.getId());
-        petDTO.setBirthDate(pet.getBirthDate());
-        petDTO.setName(pet.getName());
-        petDTO.setNotes(pet.getNotes());
-        petDTO.setOwnerId(pet.getOwner().getId());
-        petDTO.setType(pet.getType());
-
-        return petDTO;
-    }
-
-    public List<PetDTO> getPetsByOwner(long ownerId) {
+    public List<Pet> getPetsByOwner(long ownerId) {
         Optional<Customer> customerOptional = customerRepository.findById(ownerId);
         List<Pet> pets;
         if (customerOptional.isPresent()) {
@@ -67,12 +54,7 @@ public class PetService {
             pets = new ArrayList<>();
         }
 
-        List<PetDTO> petDTOs = new ArrayList<>(pets.size());
-        for (Pet pet: pets) {
-            petDTOs.add(getPetDTO(pet));
-        }
-
-        return petDTOs;
+        return pets;
     }
 
     public Optional<Pet> findById(Long petId) {
