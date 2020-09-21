@@ -7,7 +7,6 @@ import com.udacity.jdnd.course3.critter.service.ScheduleService;
 import com.udacity.jdnd.course3.critter.service.UserService;
 import com.udacity.jdnd.course3.critter.user.Customer;
 import com.udacity.jdnd.course3.critter.user.Employee;
-import com.udacity.jdnd.course3.critter.user.Person;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -78,7 +77,7 @@ public class ScheduleController {
         ScheduleDTO scheduleDTO = new ScheduleDTO();
         scheduleDTO.setActivities(schedule.getActivities());
         scheduleDTO.setDate(schedule.getDate());
-        List<Long> employeeIds = schedule.getEmployees().stream().map(Person::getId).collect(Collectors.toList());
+        List<Long> employeeIds = schedule.getEmployees().stream().map(Employee::getId).collect(Collectors.toList());
         scheduleDTO.setEmployeeIds(employeeIds);
         List<Long> petIds = schedule.getPets().stream().map(Pet::getId).collect(Collectors.toList());
         scheduleDTO.setPetIds(petIds);

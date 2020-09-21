@@ -1,17 +1,24 @@
 package com.udacity.jdnd.course3.critter.user;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.udacity.jdnd.course3.critter.pet.Pet;
+import com.udacity.jdnd.course3.critter.views.Views;
+import org.hibernate.annotations.Nationalized;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@NamedQuery(name = "Customer.findAll",
-        query = "select c from Customer c")
-@NamedQuery(name = "Customer.find",
-        query = "select c from Customer c where c.id = :customerId")
 @Entity
-public class Customer extends Person {
+public class Customer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @JsonView(Views.Public.class)
+    @Nationalized
+    private String name;
+
     private String phoneNumber;
 
     @Column(name = "notes", length = 500)
@@ -24,7 +31,7 @@ public class Customer extends Person {
     public Customer() {}
 
     public Customer(String name, String phoneNumber, String notes) {
-        super(name);
+        this.name = name;
 
         this.phoneNumber = phoneNumber;
         this.notes = notes;
@@ -57,5 +64,21 @@ public class Customer extends Person {
 
     public void addPet(Pet pet) {
         this.pets.add(pet);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

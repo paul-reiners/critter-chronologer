@@ -1,14 +1,22 @@
 package com.udacity.jdnd.course3.critter.user;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.udacity.jdnd.course3.critter.views.Views;
+import org.hibernate.annotations.Nationalized;
+
+import javax.persistence.*;
 import java.time.DayOfWeek;
 import java.util.List;
 
 @Entity
-public class Employee extends Person {
+public class Employee {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @JsonView(Views.Public.class)
+    @Nationalized
+    private String name;
 
     @ElementCollection @Enumerated(EnumType.STRING)
     private List<EmployeeSkill> skills;
@@ -17,7 +25,7 @@ public class Employee extends Person {
     private List<DayOfWeek> daysAvailable;
 
     public Employee(String name, List<EmployeeSkill> skills, List<DayOfWeek> daysAvailable) {
-        super(name);
+        this.name = name;
         this.skills = skills;
         this.daysAvailable = daysAvailable;
     }
@@ -40,5 +48,21 @@ public class Employee extends Person {
 
     public void setDaysAvailable(List<DayOfWeek> daysAvailable) {
         this.daysAvailable = daysAvailable;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
