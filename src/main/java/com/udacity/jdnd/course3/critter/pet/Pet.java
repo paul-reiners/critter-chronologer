@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Entity
 public class Pet {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @JsonView(Views.Public.class)
